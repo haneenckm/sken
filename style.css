@@ -258,7 +258,20 @@ ul { list-style: none; }
 }
 
 @media (max-width: 900px) { .main-nav { display: none; } .mobile-menu-btn { display: flex; } }
-@media (max-width: 580px) { .brand-subtext { display: none; } }
+@media (max-width: 600px) {
+  .brand-subtext { display: none; }
+  .brand-logo { height: 26px !important; width: auto !important; }
+  .brand-logotext { height: 15px !important; width: auto !important; }
+  .brand { gap: 6px !important; }
+  .header-container { padding: 0 16px !important; gap: 10px !important; }
+  
+  /* Landing page fixes so buttons are visible */
+  .hero-content h1 { font-size: 2.1rem !important; margin-bottom: 12px !important; line-height: 1.1 !important; }
+  .hero-subtitle { font-size: 0.9rem !important; margin-bottom: 20px !important; line-height: 1.5 !important; }
+  .hero-content { padding-top: calc(var(--header-h) + 10px) !important; }
+  .hero-section { min-height: 500px !important; }
+  .hero-ctas { display: none !important; }
+}
 
 /* =============================================
    SCROLL REVEAL
