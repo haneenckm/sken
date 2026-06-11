@@ -228,6 +228,8 @@ if (parallaxImg && !prefersReduced && !isTouch()) {
 
 /* =============================================
    SERVICES — hover expand matrix
+/* =============================================
+   SERVICES — hover expand matrix + mouse tracking
 ============================================= */
 const serviceCards = document.querySelectorAll('.service-card');
 
@@ -246,6 +248,15 @@ if (!isTouch()) {
     card.addEventListener('mouseleave', deactivate);
     card.addEventListener('focus',      activate);
     card.addEventListener('blur',       deactivate);
+
+    // Track mouse coordinates for interactive glow
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      card.style.setProperty('--mouse-x', `${x}px`);
+      card.style.setProperty('--mouse-y', `${y}px`);
+    });
   });
 }
 
@@ -379,4 +390,122 @@ window.addEventListener('resize', () => {
       hContainer.style.transform = '';
     }
   }, 180);
+});
+
+/* =============================================
+   STUDIO GALLERY LIGHTBOX PREVIEW
+============================================= */
+document.addEventListener('DOMContentLoaded', () => {
+  const lightboxModal = document.getElementById('lightbox-modal');
+  const lightboxImg   = document.getElementById('lightbox-img');
+  const lightboxCap   = document.getElementById('lightbox-caption');
+  const closeBtn      = document.querySelector('.lightbox-close');
+  const prevBtn       = document.querySelector('.lightbox-prev');
+  const nextBtn       = document.querySelector('.lightbox-next');
+  
+  const bentoItems    = Array.from(document.querySelectorAll('.bento-item'));
+  
+  if (!lightboxModal || bentoItems.length === 0) return;
+  
+  // Create gallery array map
+  const gallery = bentoItems.map((item, index) => {
+    const img = item.querySelector('.bento-img');
+    const titleEl = item.querySelector('.bento-title');
+    return {
+      src: img ? img.getAttribute('src') : '',
+      alt: img ? img.getAttribute('alt') : '',
+      title: titleEl ? titleEl.textContent.trim() : 'Studio Space',
+      element: item,
+      index: index
+    };
+  });
+  
+  let currentIndex = 0;
+  
+  function showPhoto(index) {
+    currentIndex = index;
+    const photo = gallery[index];
+    if (!photo || !photo.src) return;
+    
+    lightboxImg.classList.remove('loaded');
+    lightboxImg.onload = () => {
+      lightboxImg.classList.add('loaded');
+    };
+    lightboxImg.src = photo.src;
+    lightboxImg.alt = photo.alt;
+    lightboxCap.textContent = photo.title;
+    
+    lightboxModal.classList.add('open');
+    lightboxModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  
+  function hideLightbox() {
+    lightboxModal.classList.remove('open');
+    lightboxModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    lightboxImg.classList.remove('loaded');
+  }
+  
+  function goNext() {
+    let idx = (currentIndex + 1) % gallery.length;
+    showPhoto(idx);
+  }
+  
+  function goPrev() {
+    let idx = (currentIndex - 1 + gallery.length) % gallery.length;
+    showPhoto(idx);
+  }
+  
+  // Attach click to bento items
+  gallery.forEach(item => {
+    item.element.style.cursor = 'pointer';
+    item.element.addEventListener('click', (e) => {
+      e.preventDefault();
+      showPhoto(item.index);
+    });
+  });
+  
+  // Close / Prev / Next events
+  if (closeBtn) closeBtn.addEventListener('click', hideLightbox);
+  if (prevBtn) prevBtn.addEventListener('click', goPrev);
+  if (nextBtn) nextBtn.addEventListener('click', goNext);
+  
+  // Close on backdrop click
+  lightboxModal.addEventListener('click', (e) => {
+    if (e.target === lightboxModal) {
+      hideLightbox();
+    }
+  });
+  
+  // Key triggers
+  document.addEventListener('keydown', (e) => {
+    if (!lightboxModal.classList.contains('open')) return;
+    if (e.key === 'Escape') hideLightbox();
+    if (e.key === 'ArrowRight') goNext();
+    if (e.key === 'ArrowLeft') goPrev();
+  });
+
+  // Re-bind cursor state for custom lightbox controls if custom cursor is active
+  if (typeof cursor !== 'undefined' && cursor) {
+    const customButtons = [closeBtn, prevBtn, nextBtn];
+    customButtons.forEach(btn => {
+      if (!btn) return;
+      btn.addEventListener('mouseenter', () => {
+        cursor.classList.add('cursor-expand');
+        const label = btn.dataset.cursor;
+        if (cursorTx && label) {
+          cursorTx.textContent = label;
+          cursorTx.classList.add('visible');
+        }
+      });
+      btn.addEventListener('mouseleave', () => {
+        cursor.classList.remove('cursor-expand');
+        if (cursorTx) {
+          cursorTx.textContent = '';
+          cursorTx.classList.remove('visible');
+        }
+      });
+    });
+  }
 });
