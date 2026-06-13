@@ -4,6 +4,29 @@
    Horizontal Pricing, Services Hover, Form
 ============================================= */
 
+/* =============================================
+   PAGE LOADER — hide once all assets loaded
+============================================= */
+(function () {
+  const loader = document.getElementById('page-loader');
+  if (!loader) return;
+
+  function hideLoader() {
+    loader.classList.add('loader-done');
+    loader.addEventListener('transitionend', () => { if (loader.parentNode) loader.remove(); }, { once: true });
+    setTimeout(() => { if (loader.parentNode) loader.remove(); }, 900);
+  }
+
+  // Safety cap: never block user longer than 5s
+  const maxWait = setTimeout(hideLoader, 5000);
+
+  window.addEventListener('load', () => {
+    clearTimeout(maxWait);
+    // Small delay so user sees the animation at least briefly
+    setTimeout(hideLoader, 400);
+  }, { once: true });
+})();
+
 const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const isTouch = () => window.matchMedia('(hover: none)').matches;
 
@@ -108,6 +131,7 @@ if (!overlay) {
     <a href="#about"    class="nav-link" onclick="closeMenu()">Who We Are</a>
     <a href="#services" class="nav-link" onclick="closeMenu()">Services</a>
     <a href="#studio"   class="nav-link" onclick="closeMenu()">Studio Rental</a>
+    <a href="#careers"  class="nav-link" onclick="closeMenu()">Careers</a>
     <a href="#contact"  class="nav-link" onclick="closeMenu()">Contact</a>
     <a href="#studio" class="magnetic-btn btn-primary" onclick="closeMenu()" style="font-size:1rem;padding:12px 32px">Book Studio Space</a>
   `;
