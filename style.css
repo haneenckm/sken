@@ -432,27 +432,43 @@ ul { list-style: none; }
   align-items: center;
 }
 
-.marquee-content {
+/*
+  Two identical spans (Set A + Set B) placed side-by-side.
+  Animating -50% moves exactly one full set width to the left.
+  When Set A exits, Set B is already in its place — seamless loop.
+*/
+.marquee-track {
   display: flex;
-  white-space: nowrap;
-  animation: marqueeRun 30s linear infinite;
+  flex-wrap: nowrap;
+  width: max-content;
   will-change: transform;
+  animation: marqueeLoop 28s linear infinite;
 }
 
-.marquee-content:hover { animation-play-state: paused; }
+.marquee-wrapper:hover .marquee-track {
+  animation-play-state: paused;
+}
 
-.marquee-content span {
+@keyframes marqueeLoop {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee-item {
+  display: inline-block;
+  white-space: nowrap;
+  flex-shrink: 0;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: rgba(44,62,80,0.32);
-  padding-right: 0;
+  padding: 0 8px 0 0;
 }
 
-@keyframes marqueeRun {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-33.333%); }
+.marquee-item em {
+  font-style: normal;
+  color: rgba(211,84,0,0.5);
 }
 
 /* =============================================
