@@ -1625,41 +1625,49 @@ ul { list-style: none; }
   max-width: 560px;
 }
 
-/* Horizontal logo marquee */
+/* ── Clients horizontal infinite marquee ── */
 .clients-marquee-wrap {
   width: 100%;
   overflow: hidden;
   position: relative;
-  /* fade edges */
+  /* soft edge fade */
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
-  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
 }
 
+/*
+  The track contains TWO identical sets of logos back-to-back.
+  We animate from 0 → -50% so the second set slides in perfectly
+  as the first set exits — creating a gapless loop.
+*/
 .clients-marquee-track {
   display: flex;
-  gap: 0;
-  animation: clientsScroll 22s linear infinite;
+  flex-wrap: nowrap;           /* never wrap */
+  width: max-content;          /* shrink-wrap to content */
   will-change: transform;
-  width: max-content;
+  animation: clientsLoop 28s linear infinite;
 }
 
-.clients-marquee-track:hover {
+/* Pause on hover */
+.clients-marquee-wrap:hover .clients-marquee-track {
   animation-play-state: paused;
 }
 
-@keyframes clientsScroll {
+@keyframes clientsLoop {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
 
+/* Individual logo card */
 .client-logo-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 24px 48px;
-  flex-shrink: 0;
+  gap: 10px;
+  padding: 20px 52px;
+  flex-shrink: 0;               /* never shrink */
+  cursor: default;
   transition: transform 0.3s ease;
 }
 
@@ -1668,13 +1676,13 @@ ul { list-style: none; }
 }
 
 .client-logo-item img {
-  height: 64px;
+  height: 60px;
   width: auto;
-  max-width: 160px;
+  max-width: 150px;
   object-fit: contain;
-  filter: grayscale(100%) opacity(0.55);
-  transition: filter 0.35s ease;
   display: block;
+  filter: grayscale(100%) opacity(0.5);
+  transition: filter 0.35s ease;
 }
 
 .client-logo-item:hover img {
@@ -1682,12 +1690,12 @@ ul { list-style: none; }
 }
 
 .client-logo-item span {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
-  color: rgba(44,62,80,0.4);
-  text-align: center;
+  letter-spacing: 0.07em;
+  color: rgba(44,62,80,0.38);
   white-space: nowrap;
+  text-align: center;
   transition: color 0.3s ease;
 }
 
